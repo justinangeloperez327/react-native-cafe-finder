@@ -1,8 +1,8 @@
 # Café Finder
 
-Expo / React Native café discovery for Android and iOS.
+Expo + React Native café discovery for Android and iOS.
 
-## Run
+## Development
 
 ```bash
 npm install
@@ -12,16 +12,12 @@ npm test
 npx expo start --clear
 ```
 
-## Setup
+## API
 
-Enable Google Places API (New) and billing. Deploy the functions under `api/places` to Vercel with a server-only `GOOGLE_PLACES_API_KEY`, and set `EXPO_PUBLIC_API_BASE_URL` in Expo. Add rate limiting and quotas before public deployment.
+Enable Google Places API (New) with billing. Deploy the functions under `api/places` and set server-only `GOOGLE_PLACES_API_KEY`; set `EXPO_PUBLIC_API_BASE_URL` in Expo. Add rate limiting and quotas before production.
 
-## Map exploration — Group 9
+## Group 10 — Discovery UX
 
-Pan or zoom the map, then tap **Search this area** to request cafés around the current map center. Searches are manual, not triggered continuously by map gestures. Recenter returns to the last searched center; **Use my current location** restores GPS-based search. Map/List views share results and filters.
+Explore list cards now display available ratings, rating counts, opening status, straight-line distance, favorites and actions. Search loading, API failures, empty areas and filtered-out results have distinct messages. Starting a new nearby request cancels the previous nearby request, preventing stale results from overwriting the newest search. This is a client-side UX improvement; live API/device verification is still required.
 
-The Places nearby API currently searches a 5 km circle, returns up to 20 cafés, and does not search the entire visible map bounds. Radius and distance filters operate on that result set. Map gesture detection may behave differently on iOS and Android; test on both.
-
-## Saved cafés
-
-Favorites and collections persist on-device using Place IDs. Café metadata is refreshed from the API.
+Search-by-city, map-center discovery and filters from Groups 7–9 remain available. Google Places nearby results are capped at 20 within 5 km. Saved favorites and collections persist locally as Place IDs.
