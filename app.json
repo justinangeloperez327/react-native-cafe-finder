@@ -14,7 +14,11 @@
       "package": "com.cafefinder.mobile"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      {
+        "name": "expo-location",
+        "locationWhenInUsePermission": "Allow Café Finder to find coffee shops near you."
+      }
     ],
     "experiments": {
       "typedRoutes": true
