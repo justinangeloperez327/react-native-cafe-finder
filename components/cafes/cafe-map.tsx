@@ -13,14 +13,14 @@ export function CafeMap({ cafes, location, selected, onSelect, onDirections, loa
     map.current?.animateToRegion(region, 450);
   }, [location]);
   return <View className="flex-1">
-    <MapView ref={map} style={{ flex: 1 }} showsUserLocation={!!location} showsMyLocationButton={false}
+    <MapView ref={map} style={{ flex: 1 }} showsUserLocation={false} showsMyLocationButton={false}
       initialRegion={{ latitude: location?.latitude ?? 24.4539, longitude: location?.longitude ?? 54.3773, latitudeDelta: 0.055, longitudeDelta: 0.055 }}
       accessibilityLabel="Map of nearby cafés">
       {cafes.map(cafe => <Marker key={cafe.id} coordinate={{ latitude: cafe.latitude, longitude: cafe.longitude }}
         title={cafe.name} description={cafe.address} pinColor={selected?.id === cafe.id ? '#30241D' : '#6F4E37'}
         onPress={() => onSelect(cafe)} />)}
     </MapView>
-    {location && <Pressable accessibilityRole="button" accessibilityLabel="Center map on my location"
+    {location && <Pressable accessibilityRole="button" accessibilityLabel="Center map on search location"
       className="absolute right-4 top-4 rounded-full bg-white p-3 shadow"
       onPress={() => map.current?.animateToRegion({ ...location, latitudeDelta: 0.055, longitudeDelta: 0.055 }, 450)}>
       <Text className="text-lg text-coffee-700">◎</Text>

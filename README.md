@@ -1,6 +1,6 @@
 # Café Finder
 
-Android and iOS café discovery app with Expo, React Native, TypeScript, Expo Router and NativeWind.
+Android and iOS café discovery app built with Expo, React Native, TypeScript, Expo Router and NativeWind.
 
 ## Development
 
@@ -12,14 +12,16 @@ npm test
 npx expo start --clear
 ```
 
-## Google Places
+## Live discovery
 
-Enable Places API (New) and billing in Google Cloud. Deploy the API functions under `api/places` to Vercel with server-only `GOOGLE_PLACES_API_KEY`. Configure `EXPO_PUBLIC_API_BASE_URL` in the Expo app. Protect the proxy with quotas, rate limiting and abuse controls before production.
+Enable Google Places API (New) and billing in Google Cloud. Deploy the Vercel API functions in `api/places` and configure the server-only `GOOGLE_PLACES_API_KEY`. Set `EXPO_PUBLIC_API_BASE_URL` in the Expo app. Apply rate limiting, quota controls and authentication/abuse protection before public launch.
 
-## Discovery (Group 7)
+## Group 8 — Location search
 
-Explore supports map/list switching, nearby cafés, text filtering, open-now status, minimum Google rating, distance radius and nearest/top-rated/name sorting. Filtering is client-side over the nearby response (up to 20 cafés within a 5 km radius); it does not perform full-text Google Places searches. Distance is straight-line rather than travel distance. Unrated cafés are excluded when a minimum rating is selected; unknown opening status is excluded by Open now.
+Explore supports city and neighborhood suggestions from Places Autocomplete (New), selecting a suggested area, retrieving its coordinates, and searching cafés within 5 km of the selected area. The chosen area remains active when refreshing the results; **Use my current location** restores GPS discovery. Map and list share the same results and client-side filters. Search suggestions require the deployed API; they are not offline-capable.
+
+Nearby search is capped at 20 results. Filters do not search the entire city. The map center is the selected search area, not necessarily the device's GPS position.
 
 ## Saved cafés
 
-Favorites and named collections persist locally in AsyncStorage using Place IDs only. Café details are fetched again when online. No account or cross-device synchronization yet.
+Favorites and collections persist locally using Place IDs only. Café details are fetched online; no account or cloud sync yet.
