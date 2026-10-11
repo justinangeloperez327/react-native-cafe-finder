@@ -42,7 +42,7 @@ export default function CafeDetailsScreen() {
           {cafe.phone ? <Pressable accessibilityRole="button" onPress={() => open(`tel:${cafe.phone}`)} className="rounded-xl border border-stone-200 bg-white px-5 py-3"><Text className="font-semibold text-coffee-700">Call</Text></Pressable> : null}
           {cafe.website ? <Pressable accessibilityRole="button" onPress={() => open(cafe.website)} className="rounded-xl border border-stone-200 bg-white px-5 py-3"><Text className="font-semibold text-coffee-700">Website</Text></Pressable> : null}
         </View>
-        {cafe.weekdayDescriptions.length > 0 && <View className="mt-8 rounded-2xl bg-white p-5"><Text className="mb-3 text-lg font-semibold text-coffee-900">Opening hours</Text>{cafe.weekdayDescriptions.map(day => <Text key={day} className="mb-2 text-sm text-stone-600">{day}</Text>)}</View>}
+        {(cafe.weekdayDescriptions?.length ?? 0) > 0 && <View className="mt-8 rounded-2xl bg-white p-5"><Text className="mb-3 text-lg font-semibold text-coffee-900">Opening hours</Text>{cafe.weekdayDescriptions?.map(day => <Text key={day} className="mb-2 text-sm text-stone-600">{day}</Text>)}</View>}
         <Text className="mt-6 text-xs text-stone-500">Place information provided by Google Maps Platform.</Text>
       </View>
     </ScrollView>}
