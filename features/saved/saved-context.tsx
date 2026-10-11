@@ -31,7 +31,7 @@ export function SavedCafesProvider({ children }: { children: ReactNode }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dataRef = useRef(data);
-  const busy = useRef(false);
+  const queue = useRef<Promise<void>>(Promise.resolve());
   useEffect(() => {
     let mounted = true;
     AsyncStorage.getItem(KEY).then(value => {
@@ -42,13 +42,24 @@ export function SavedCafesProvider({ children }: { children: ReactNode }) {
       .finally(() => { if (mounted) setReady(true); });
     return () => { mounted = false; };
   }, []);
-  const persist = useCallback(async (transform: (current: SavedData) => SavedData) => {
-    if (!ready || busy.current) return;
-    busy.current = true; setSaving(true); setError(null);
-    const next = transform(dataRef.current);
-    try { await AsyncStorage.setItem(KEY, JSON.stringify(next)); dataRef.current = next; setData(next); }
-    catch { setError('Unable to save changes on this device. Please try again.'); }
-    finally { busy.current = false; setSaving(false); }
+  const persist = useCallback((transform: (current: SavedData) => SavedData): Promise<boolean> => {
+    if (!ready) return Promise.resolve(false);
+    const operation = queue.current.catch(() => undefined).then(async () => {
+      setSaving(true); setError(null);
+      const next = transform(dataRef.current);
+      try {
+        await AsyncStorage.setItem(KEY, JSON.stringify(next));
+        dataRef.current = next; setData(next);
+        return true;
+      } catch {
+        setError('Unable to save changes on this device. Please try again.');
+        return false;
+      }
+    });
+    queue.current = operation.then(() => undefined, () => undefined);
+    void queue.current.then(() => { if (queue.current === marker) setSaving(false); });
+    const marker = queue.current;
+    return operation;
   }, [ready]);
   const toggleFavorite = useCallback(async (id: string) => {
     if (!id) return;
@@ -56,10 +67,9 @@ export function SavedCafesProvider({ children }: { children: ReactNode }) {
   }, [persist]);
   const createCollection = useCallback(async (name: string) => {
     const trimmed = name.trim().slice(0, 50);
-    if (!trimmed || !ready || busy.current) return false;
+    if (!trimmed || !ready) return false;
     if (dataRef.current.collections.some(c => c.name.toLowerCase() === trimmed.toLowerCase())) { setError('A collection with that name already exists.'); return false; }
-    await persist(current => ({ ...current, collections: [...current.collections, { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, name: trimmed, placeIds: [] }] }));
-    return true;
+    return persist(current => ({ ...current, collections: [...current.collections, { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, name: trimmed, placeIds: [] }] }));
   }, [persist, ready]);
   const deleteCollection = useCallback(async (id: string) => { await persist(current => ({ ...current, collections: current.collections.filter(c => c.id !== id) })); }, [persist]);
   const toggleCollectionPlace = useCallback(async (collectionId: string, placeId: string) => {

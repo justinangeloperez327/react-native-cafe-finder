@@ -15,9 +15,14 @@ export default function SavedScreen() {
   const allIds = [...new Set([...favoriteIds, ...collections.flatMap(c => c.placeIds)])];
   const key = allIds.join('|');
   const load = useCallback(async (ids: string[], signal: AbortSignal) => {
-    if (!ids.length) { setDetails({}); setLoadError(null); return; }
+    if (!ids.length) { setDetails({}); setLoadError(null); setLoading(false); return; }
     setLoading(true); setLoadError(null);
-    const results = await Promise.allSettled(ids.map(id => getCafeDetails(id, signal)));
+    const results: PromiseSettledResult<CafeDetails>[] = [];
+    // Bound concurrency to avoid flooding the Places details endpoint.
+    for (let i = 0; i < ids.length && !signal.aborted; i += 4) {
+      const batch = await Promise.allSettled(ids.slice(i, i + 4).map(id => getCafeDetails(id, signal)));
+      results.push(...batch);
+    }
     if (signal.aborted) return;
     const next: Record<string, CafeDetails> = {};
     results.forEach((result, index) => { if (result.status === 'fulfilled') next[ids[index]] = result.value; });

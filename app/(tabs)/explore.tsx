@@ -25,8 +25,10 @@ export default function ExploreScreen() {
   const [error, setError] = useState<string | null>(null);
   const [searched, setSearched] = useState(false);
   const request = useRef<AbortController | null>(null);
-  useEffect(() => () => request.current?.abort(), []);
+  const selection = useRef<AbortController | null>(null);
+  useEffect(() => () => { request.current?.abort(); selection.current?.abort(); }, []);
   const load = useCallback(async (target?: { coordinates: Coordinates; label: string }) => {
+    selection.current?.abort();
     request.current?.abort();
     const controller = new AbortController(); request.current = controller;
     setLoading(true); setError(null);
@@ -42,9 +44,17 @@ export default function ExploreScreen() {
   }, []);
   useEffect(() => { void load(); }, [load]);
   const selectLocation = async (suggestion: LocationSuggestion) => {
+    selection.current?.abort();
+    const controller = new AbortController();
+    selection.current = controller;
     setLoading(true); setError(null);
-    try { const resolved = await resolveLocation(suggestion.id); await load({ coordinates: resolved.location, label: resolved.label }); }
-    catch (e) { setError(e instanceof Error ? e.message : 'Unable to search this location.'); setLoading(false); }
+    try {
+      const resolved = await resolveLocation(suggestion.id, controller.signal);
+      if (controller.signal.aborted) return;
+      await load({ coordinates: resolved.location, label: resolved.label });
+    } catch (e) {
+      if (!controller.signal.aborted) { setError(e instanceof Error ? e.message : 'Unable to search this location.'); setLoading(false); }
+    }
   };
   const filtered = filterCafes(cafes, location, filters);
   const searchMapArea = (center: Coordinates) => {
