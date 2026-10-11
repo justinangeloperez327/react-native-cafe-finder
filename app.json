@@ -15,10 +15,12 @@
     },
     "plugins": [
       "expo-router",
-      {
-        "name": "expo-location",
-        "locationWhenInUsePermission": "Allow Café Finder to find coffee shops near you."
-      }
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow Café Finder to find coffee shops near you."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
