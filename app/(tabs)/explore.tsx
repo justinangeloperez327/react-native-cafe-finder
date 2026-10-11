@@ -44,6 +44,7 @@ export default function ExploreScreen() {
   }, []);
   useEffect(() => { void load(); }, [load]);
   const selectLocation = async (suggestion: LocationSuggestion) => {
+    request.current?.abort();
     selection.current?.abort();
     const controller = new AbortController();
     selection.current = controller;
