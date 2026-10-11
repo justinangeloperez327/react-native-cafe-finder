@@ -1,8 +1,8 @@
 # Café Finder
 
-Android and iOS café discovery app built with Expo, React Native, TypeScript, Expo Router and NativeWind.
+Expo / React Native café discovery for Android and iOS.
 
-## Development
+## Run
 
 ```bash
 npm install
@@ -12,16 +12,16 @@ npm test
 npx expo start --clear
 ```
 
-## Live discovery
+## Setup
 
-Enable Google Places API (New) and billing in Google Cloud. Deploy the Vercel API functions in `api/places` and configure the server-only `GOOGLE_PLACES_API_KEY`. Set `EXPO_PUBLIC_API_BASE_URL` in the Expo app. Apply rate limiting, quota controls and authentication/abuse protection before public launch.
+Enable Google Places API (New) and billing. Deploy the functions under `api/places` to Vercel with a server-only `GOOGLE_PLACES_API_KEY`, and set `EXPO_PUBLIC_API_BASE_URL` in Expo. Add rate limiting and quotas before public deployment.
 
-## Group 8 — Location search
+## Map exploration — Group 9
 
-Explore supports city and neighborhood suggestions from Places Autocomplete (New), selecting a suggested area, retrieving its coordinates, and searching cafés within 5 km of the selected area. The chosen area remains active when refreshing the results; **Use my current location** restores GPS discovery. Map and list share the same results and client-side filters. Search suggestions require the deployed API; they are not offline-capable.
+Pan or zoom the map, then tap **Search this area** to request cafés around the current map center. Searches are manual, not triggered continuously by map gestures. Recenter returns to the last searched center; **Use my current location** restores GPS-based search. Map/List views share results and filters.
 
-Nearby search is capped at 20 results. Filters do not search the entire city. The map center is the selected search area, not necessarily the device's GPS position.
+The Places nearby API currently searches a 5 km circle, returns up to 20 cafés, and does not search the entire visible map bounds. Radius and distance filters operate on that result set. Map gesture detection may behave differently on iOS and Android; test on both.
 
 ## Saved cafés
 
-Favorites and collections persist locally using Place IDs only. Café details are fetched online; no account or cloud sync yet.
+Favorites and collections persist on-device using Place IDs. Café metadata is refreshed from the API.

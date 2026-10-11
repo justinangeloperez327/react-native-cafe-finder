@@ -40,6 +40,9 @@ export default function ExploreScreen() {
     catch (e) { setError(e instanceof Error ? e.message : 'Unable to search this location.'); setLoading(false); }
   };
   const filtered = filterCafes(cafes, location, filters);
+  const searchMapArea = (center: Coordinates) => {
+    void load({ coordinates: center, label: 'Map area' });
+  };
   const directions = (cafe: Cafe) => {
     const url = cafe.googleMapsUri || `https://www.google.com/maps/search/?api=1&query=${cafe.latitude},${cafe.longitude}`;
     void Linking.openURL(url);
@@ -69,7 +72,7 @@ export default function ExploreScreen() {
     {error && <View className="mx-5 mb-3 rounded-xl bg-white p-4"><Text className="mb-3 text-coffee-900">{error}</Text><Pressable onPress={() => void (location ? load({ coordinates: location, label: locationLabel }) : load())}><Text className="font-semibold text-coffee-700">Try again</Text></Pressable></View>}
     {mode === 'map' && <View className="flex-1">
       <CafeMap cafes={filtered} location={location} selected={selected && filtered.some(c => c.id === selected.id) ? selected : null}
-        onSelect={setSelected} onDirections={directions} loading={loading} />
+        onSelect={setSelected} onDirections={directions} loading={loading} onSearchArea={searchMapArea} />
       {!loading && !error && searched && filtered.length === 0 && <View className="absolute left-5 right-5 top-4 rounded-xl bg-white p-4"><Text className="text-center text-stone-500">No cafés match your search.</Text></View>}
     </View>}
     {mode === 'list' && <ScrollView className="flex-1 px-5" contentContainerStyle={{ paddingBottom: 28 }}
