@@ -1,6 +1,6 @@
 # Café Finder
 
-Android and iOS café discovery built with Expo, React Native, TypeScript, Expo Router and NativeWind.
+Android and iOS café discovery app with Expo, React Native, TypeScript, Expo Router and NativeWind.
 
 ## Development
 
@@ -8,15 +8,18 @@ Android and iOS café discovery built with Expo, React Native, TypeScript, Expo 
 npm install
 npx expo install --fix
 npm run typecheck
+npm test
 npx expo start --clear
 ```
 
-## Live Places integration
+## Google Places
 
-Enable Places API (New) and billing in Google Cloud. Deploy `api/places/nearby.ts`, `api/places/details.ts`, and `api/places/photo.ts` as serverless endpoints with a server-only `GOOGLE_PLACES_API_KEY`. Configure `EXPO_PUBLIC_API_BASE_URL` in the Expo app. Keep Google API credentials off mobile clients and add API abuse protection before public release.
+Enable Places API (New) and billing in Google Cloud. Deploy the API functions under `api/places` to Vercel with server-only `GOOGLE_PLACES_API_KEY`. Configure `EXPO_PUBLIC_API_BASE_URL` in the Expo app. Protect the proxy with quotas, rate limiting and abuse controls before production.
 
-## Saved cafés (Group 6)
+## Discovery (Group 7)
 
-Favorites and named collections use AsyncStorage, without login. Only Google Place IDs and user-created collection metadata are persisted locally; café names, photos, ratings and addresses are fetched again when viewing saved items. Saved cafés will therefore show limited information offline. Collection membership is independent from Favorites: removing a favorite does not remove it from a collection.
+Explore supports map/list switching, nearby cafés, text filtering, open-now status, minimum Google rating, distance radius and nearest/top-rated/name sorting. Filtering is client-side over the nearby response (up to 20 cafés within a 5 km radius); it does not perform full-text Google Places searches. Distance is straight-line rather than travel distance. Unrated cafés are excluded when a minimum rating is selected; unknown opening status is excluded by Open now.
 
-Saved data is device-local and is not synchronized or backed up by the app. Clearing app storage or uninstalling may erase it.
+## Saved cafés
+
+Favorites and named collections persist locally in AsyncStorage using Place IDs only. Café details are fetched again when online. No account or cross-device synchronization yet.

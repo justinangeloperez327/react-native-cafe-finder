@@ -4,6 +4,8 @@ import { ActivityIndicator, Linking, Pressable, RefreshControl, ScrollView, Text
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { CafeMap } from '@/components/cafes/cafe-map';
+import { CafeFilterControls } from '@/components/cafes/cafe-filters';
+import { defaultCafeFilters, filterCafes, distanceKm } from '@/lib/cafe-filters';
 import { getCurrentCoordinates } from '@/lib/location';
 import { findNearbyCafes } from '@/lib/cafes';
 import type { Cafe, Coordinates } from '@/types/cafe';
@@ -13,7 +15,7 @@ export default function ExploreScreen() {
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [selected, setSelected] = useState<Cafe | null>(null);
   const [mode, setMode] = useState<'map' | 'list'>('map');
-  const [query, setQuery] = useState('');
+  const [filters, setFilters] = useState(defaultCafeFilters);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searched, setSearched] = useState(false);
@@ -28,7 +30,7 @@ export default function ExploreScreen() {
     finally { setLoading(false); }
   }, []);
   useEffect(() => { void load(); }, [load]);
-  const filtered = cafes.filter(c => `${c.name} ${c.address}`.toLowerCase().includes(query.trim().toLowerCase()));
+  const filtered = filterCafes(cafes, location, filters);
   const directions = (cafe: Cafe) => {
     const url = cafe.googleMapsUri || `https://www.google.com/maps/search/?api=1&query=${cafe.latitude},${cafe.longitude}`;
     void Linking.openURL(url);
@@ -37,7 +39,7 @@ export default function ExploreScreen() {
     <View className="px-5 pb-3 pt-5">
       <Text className="text-3xl font-bold text-coffee-900">Explore cafés</Text>
       <Text className="mb-4 mt-1 text-stone-500">Find coffee spots near you</Text>
-      <TextInput value={query} onChangeText={setQuery} placeholder="Filter cafés by name or address" placeholderTextColor="#9A8F87"
+      <TextInput value={filters.query} onChangeText={query => setFilters(current => ({ ...current, query }))} placeholder="Filter cafés by name or address" placeholderTextColor="#9A8F87"
         accessibilityLabel="Filter cafés" className="mb-3 rounded-xl border border-stone-200 bg-white px-4 py-3 text-coffee-900" />
       <View className="flex-row gap-2">
         {(['map', 'list'] as const).map(value => <Pressable key={value} accessibilityRole="button"
@@ -50,6 +52,8 @@ export default function ExploreScreen() {
           <Ionicons name="refresh" size={19} color="#6F4E37" />
         </Pressable>
       </View>
+      <CafeFilterControls filters={filters} onChange={setFilters} onReset={() => setFilters(defaultCafeFilters)} />
+      <Text className="mt-3 text-xs text-stone-500">{filtered.length} of {cafes.length} nearby cafés · Filters apply to loaded results</Text>
     </View>
     {error && <View className="mx-5 mb-3 rounded-xl bg-white p-4"><Text className="mb-3 text-coffee-900">{error}</Text><Pressable onPress={() => void load()}><Text className="font-semibold text-coffee-700">Try again</Text></Pressable></View>}
     {mode === 'map' && <View className="flex-1">
@@ -64,6 +68,7 @@ export default function ExploreScreen() {
       {!loading && filtered.map(cafe => <View key={cafe.id} className="mb-3 rounded-2xl border border-stone-200 bg-white p-5">
         <Text className="text-lg font-semibold text-coffee-900">{cafe.name}</Text>
         <Text className="mt-1 text-sm text-stone-500">{cafe.address}</Text>
+        {location && <Text className="mt-1 text-xs text-stone-500">{distanceKm(location, cafe).toFixed(1)} km away (straight-line)</Text>}
         <Text className="mt-2 text-sm text-coffee-700">{cafe.rating == null ? 'Not rated' : `★ ${cafe.rating.toFixed(1)}`}{cafe.openNow == null ? '' : cafe.openNow ? ' · Open now' : ' · Closed'}</Text>
         <View className="mt-4 flex-row gap-4">
           <Pressable onPress={() => { setSelected(cafe); setMode('map'); }} accessibilityRole="button"><Text className="font-semibold text-coffee-700">Show on map</Text></Pressable>
