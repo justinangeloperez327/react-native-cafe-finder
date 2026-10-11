@@ -1,8 +1,8 @@
 # Café Finder
 
-Cross-platform café discovery app built with Expo, React Native, TypeScript, Expo Router and NativeWind.
+Android and iOS café discovery built with Expo, React Native, TypeScript, Expo Router and NativeWind.
 
-## Local development
+## Development
 
 ```bash
 npm install
@@ -11,15 +11,12 @@ npm run typecheck
 npx expo start --clear
 ```
 
-## Google Places setup
+## Live Places integration
 
-1. Enable Places API (New) and billing in Google Cloud.
-2. Deploy the serverless endpoint in `api/places/nearby.ts` to Vercel and set server-only `GOOGLE_PLACES_API_KEY`.
-3. Set `EXPO_PUBLIC_API_BASE_URL` in a local `.env` to your HTTPS API origin.
-4. Grant foreground location permission in the Explore tab.
+Enable Places API (New) and billing in Google Cloud. Deploy `api/places/nearby.ts`, `api/places/details.ts`, and `api/places/photo.ts` as serverless endpoints with a server-only `GOOGLE_PLACES_API_KEY`. Configure `EXPO_PUBLIC_API_BASE_URL` in the Expo app. Keep Google API credentials off mobile clients and add API abuse protection before public release.
 
-## Group 4 map
+## Saved cafés (Group 6)
 
-The Explore screen now offers Map and List views, markers for fetched cafés, map selection cards, current-location recentering, local result filtering and navigation links. Search is limited to the initial 5 km Places response and does not automatically fetch results when the map is panned. Map native dependency versions should be validated with `npx expo install --check` and `npx expo install --fix` before native builds.
+Favorites and named collections use AsyncStorage, without login. Only Google Place IDs and user-created collection metadata are persisted locally; café names, photos, ratings and addresses are fetched again when viewing saved items. Saved cafés will therefore show limited information offline. Collection membership is independent from Favorites: removing a favorite does not remove it from a collection.
 
-Never embed a private Places API key in Expo public variables. Protect the deployed endpoint with rate limiting, abuse protection and quotas before public launch.
+Saved data is device-local and is not synchronized or backed up by the app. Clearing app storage or uninstalling may erase it.

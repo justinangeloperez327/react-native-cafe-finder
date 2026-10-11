@@ -4,9 +4,11 @@ import { ActivityIndicator, Image, Linking, Pressable, ScrollView, Text, View } 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { cafePhotoUrl, getCafeDetails } from '@/lib/cafes';
+import { useSavedCafes } from '@/features/saved/saved-context';
 import type { CafeDetails } from '@/types/cafe';
 export default function CafeDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { isSaved, toggleFavorite, ready, saving } = useSavedCafes();
   const [cafe, setCafe] = useState<CafeDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -35,6 +37,7 @@ export default function CafeDetailsScreen() {
         <Text className="mt-3 text-base text-coffee-700">{cafe.rating == null ? 'No rating available' : `★ ${cafe.rating.toFixed(1)}${cafe.ratingCount == null ? '' : ` · ${cafe.ratingCount} ratings`}`}{cafe.openNow == null ? '' : cafe.openNow ? ' · Open now' : ' · Closed'}</Text>
         {cafe.editorialSummary ? <Text className="mt-5 text-base leading-6 text-coffee-900">{cafe.editorialSummary}</Text> : null}
         <View className="mt-6 flex-row flex-wrap gap-3">
+          <Pressable accessibilityRole="button" accessibilityLabel={isSaved(cafe.id) ? "Remove from saved cafés" : "Save café"} disabled={!ready || saving} onPress={() => void toggleFavorite(cafe.id)} className="rounded-xl border border-stone-200 bg-white px-5 py-3"><Text className="font-semibold text-coffee-700">{isSaved(cafe.id) ? "♥ Saved" : "♡ Save"}</Text></Pressable>
           <Pressable accessibilityRole="button" onPress={() => open(cafe.googleMapsUri || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cafe.name + ' ' + cafe.address)}`)} className="rounded-xl bg-coffee-700 px-5 py-3"><Text className="font-semibold text-white">Directions</Text></Pressable>
           {cafe.phone ? <Pressable accessibilityRole="button" onPress={() => open(`tel:${cafe.phone}`)} className="rounded-xl border border-stone-200 bg-white px-5 py-3"><Text className="font-semibold text-coffee-700">Call</Text></Pressable> : null}
           {cafe.website ? <Pressable accessibilityRole="button" onPress={() => open(cafe.website)} className="rounded-xl border border-stone-200 bg-white px-5 py-3"><Text className="font-semibold text-coffee-700">Website</Text></Pressable> : null}
