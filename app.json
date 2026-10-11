@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Café Finder",
+    "slug": "react-native-cafe-finder",
+    "scheme": "cafefinder",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cafefinder.mobile"
+    },
+    "android": {
+      "package": "com.cafefinder.mobile"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
