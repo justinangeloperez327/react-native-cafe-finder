@@ -1,2 +1,5 @@
-import { Screen } from '@/components/screen';
-export default function ExploreScreen() { return <Screen title="Explore cafés" description="Search, filters and an interactive map will appear here." />; }
+import { useState } from 'react';
+import { TextInput, Text, View, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { SectionHeading } from '@/components/ui/section-heading';
+export default function ExploreScreen() { const [query, setQuery] = useState(''); return <SafeAreaView className="flex-1 bg-coffee-50"><ScrollView className="px-6 pt-8"><SectionHeading title="Explore cafés" caption="Find a place for your next coffee break" /><TextInput value={query} onChangeText={setQuery} placeholder="Search café or location" placeholderTextColor="#9A8F87" className="mt-3 rounded-2xl border border-stone-200 bg-white p-4 text-coffee-900" accessibilityLabel="Search cafés" /><View className="mt-8 items-center rounded-3xl border border-stone-200 bg-white p-10"><Text className="text-lg font-semibold text-coffee-900">Discovery is coming soon</Text><Text className="mt-2 text-center text-stone-500">Map search, filters, and live café results will be connected in a future group.</Text></View></ScrollView></SafeAreaView>; }

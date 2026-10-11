@@ -1,2 +1,8 @@
-import { Screen } from '@/components/screen';
-export default function HomeScreen() { return <Screen title="Find your next café" description="Discover coffee spots worth visiting. Nearby recommendations are coming soon." />; }
+import { Ionicons } from '@expo/vector-icons';
+import { Link } from 'expo-router';
+import { ScrollView, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { CafeCard, type CafePreview } from '@/components/ui/cafe-card';
+import { SectionHeading } from '@/components/ui/section-heading';
+const previews: CafePreview[] = [{ id: 'demo-1', name: 'Your next favorite café', area: 'Nearby discoveries', note: 'Live results coming soon' }, { id: 'demo-2', name: 'A quiet place to unwind', area: 'Explore coffee spots', note: 'Find your perfect atmosphere' }];
+export default function HomeScreen() { return <SafeAreaView className="flex-1 bg-coffee-50"><ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 40 }}><View className="mb-8 mt-4 flex-row items-center justify-between"><View><Text className="text-sm text-coffee-700">GOOD COFFEE, GOOD PLACES</Text><Text className="mt-2 text-3xl font-bold text-coffee-900">Find your café.</Text></View><View className="rounded-full bg-coffee-100 p-3"><Ionicons name="cafe" size={24} color="#6F4E37" /></View></View><Link href="/(tabs)/explore" className="mb-8 rounded-2xl border border-stone-200 bg-white p-4 text-base text-stone-500">⌕  Search cafés or neighborhoods</Link><View className="mb-8 rounded-3xl bg-coffee-700 p-6"><Text className="text-2xl font-semibold text-white">Coffee is better when discovered.</Text><Text className="mt-3 text-base leading-6 text-stone-200">Your guide to cafés nearby. Location-based recommendations are on the way.</Text></View><SectionHeading title="Discover something new" caption="A preview of what's coming" />{previews.map(cafe => <CafeCard key={cafe.id} cafe={cafe} />)}<Text className="mt-4 text-center text-xs text-stone-500">Preview content only — not real café listings.</Text></ScrollView></SafeAreaView>; }
