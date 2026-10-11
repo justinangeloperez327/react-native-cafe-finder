@@ -1,13 +1,16 @@
 # Café Finder
 
-Cross-platform café discovery app built with Expo, React Native, and TypeScript.
+A cross-platform café discovery application for Android and iOS using Expo, React Native, TypeScript and Expo Router.
 
-## Local setup
+## Getting started
 
 ```bash
-npx create-expo-app@latest react-native-cafe-finder --template default
-cd react-native-cafe-finder
+npm install
 npx expo start
 ```
 
-The application will support Android and iOS. Google Places and backend integrations will be added in later phases.
+Open the Expo Go app or an Android/iOS simulator. Native development builds will be configured when Maps is integrated.
+
+## Planned integrations
+
+Google Places API (New), location permissions, NestJS API, PostgreSQL/Prisma and user authentication. No API keys are required for the initial shell.
