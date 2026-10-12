@@ -12,18 +12,19 @@ export default function CafeDetailsScreen() {
   const [cafe, setCafe] = useState<CafeDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [retryKey, setRetryKey] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
     setCafe(null); setError(null); setLoading(true);
     if (!id) { setError('Café ID is missing.'); setLoading(false); return () => controller.abort(); }
     getCafeDetails(id, controller.signal).then(setCafe).catch(e => { if (!controller.signal.aborted) setError(e instanceof Error ? e.message : 'Unable to load café.'); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [id]);
+  }, [id, retryKey]);
   const open = (url?: string) => { if (url) void Linking.openURL(url); };
   return <SafeAreaView className="flex-1 bg-coffee-50">
     <Stack.Screen options={{ headerShown: true, title: 'Café details', headerBackTitle: 'Back' }} />
     {loading && <ActivityIndicator color="#6F4E37" style={{ marginTop: 48 }} />}
-    {error && <Text className="px-6 pt-8 text-coffee-900">{error}</Text>}
+    {error && !loading && <View className="px-6 pt-8"><Text accessibilityRole="alert" className="text-coffee-900">{error}</Text><Pressable accessibilityRole="button" accessibilityLabel="Retry loading café details" onPress={() => setRetryKey(value => value + 1)} className="mt-4 self-start rounded-xl bg-coffee-700 px-5 py-3"><Text className="font-semibold text-white">Try again</Text></Pressable></View>}
     {cafe && <ScrollView contentContainerStyle={{ paddingBottom: 48 }}>
       {cafe.photos.length > 0 ? <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} className="mb-5">
         {cafe.photos.map(photo => <View key={photo.name} style={{ width: 320, marginLeft: 16 }}>
