@@ -16,7 +16,7 @@ export async function findNearbyCafes(location: Coordinates, signal?: AbortSigna
 }
 export async function getCafeDetails(id: string, signal?: AbortSignal): Promise<CafeDetails> {
   const data = await requestJson<{ cafe: CafeDetails }>(`${apiBaseUrl()}/api/places/details?id=${encodeURIComponent(id)}`, signal);
-  if (!data?.cafe || !Array.isArray(data.cafe.photos)) throw new Error('Unexpected café details response.');
+  if (!data?.cafe || typeof data.cafe.id !== 'string' || typeof data.cafe.name !== 'string' || !Array.isArray(data.cafe.photos)) throw new Error('Unexpected café details response.');
   return data.cafe;
 }
 export function cafePhotoUrl(name: string, width = 720): string {
